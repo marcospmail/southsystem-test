@@ -56,30 +56,34 @@ export const Details = styled.main`
   line-height: 26px;
 
   img {
-    align-self: flex-start;
-    width: 250px;
     float: left;
+    align-self: flex-start;
+    height: 360px;
     margin-right: 10px;
   }
 
-  strong {
-    margin-top: 20px;
-    display: block;
-  }
+  #detailsText {
+    min-height: 360px;
 
-  span {
-    font-weight: bold;
-    color: #949494;
-  }
+    strong {
+      margin-top: 20px;
+      display: block;
+    }
 
-  #title {
-    margin-top: 0px;
-    font-size: 28px;
-  }
+    span {
+      font-weight: bold;
+      color: #949494;
+    }
 
-  #subtitle {
-    font-size: 20px;
-    margin-top: 5px;
-    color: #949494;
+    #title {
+      margin-top: 0px;
+      font-size: 28px;
+    }
+
+    #subtitle {
+      font-size: 20px;
+      margin-top: 5px;
+      color: #949494;
+    }
   }
 `

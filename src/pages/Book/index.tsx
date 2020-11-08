@@ -52,22 +52,24 @@ const Book: React.FC = () => {
             alt={book?.volumeInfo.title}
           />
 
-          <strong id="title">{book?.volumeInfo.title}</strong>
-          <strong id="subtitle">{book?.volumeInfo.subtitle}</strong>
+          <div id="detailsText">
+            <strong id="title">{book?.volumeInfo.title}</strong>
+            <strong id="subtitle">{book?.volumeInfo.subtitle}</strong>
 
-          <strong>AUTHOR</strong>
-          <span>{book?.volumeInfo.authors?.join(', ')}</span>
+            <strong>AUTHOR</strong>
+            <span>{book?.volumeInfo.authors?.join(', ')}</span>
 
-          <strong>DATE</strong>
-          <span>
-            {book?.volumeInfo?.publishedDate &&
-            isValid(parseISO(book.volumeInfo?.publishedDate))
-              ? format(parseISO(book.volumeInfo?.publishedDate), 'dd/MM/yyyy')
-              : book?.volumeInfo.publishedDate}
-          </span>
+            <strong>DATE</strong>
+            <span>
+              {book?.volumeInfo?.publishedDate &&
+              isValid(parseISO(book.volumeInfo?.publishedDate))
+                ? format(parseISO(book.volumeInfo?.publishedDate), 'dd/MM/yyyy')
+                : book?.volumeInfo.publishedDate}
+            </span>
 
-          <strong>DESCRIPTION</strong>
-          <span>{book?.volumeInfo.description}</span>
+            <strong>DESCRIPTION</strong>
+            <span>{book?.volumeInfo.description}</span>
+          </div>
         </Details>
       </Content>
     </Container>
