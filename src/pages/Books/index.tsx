@@ -1,9 +1,9 @@
 import React, {
   useState,
   useCallback,
-  ChangeEvent,
   useEffect,
   FormEvent,
+  useRef,
 } from 'react'
 import { useHistory } from 'react-router-dom'
 import { format, parseISO, isValid } from 'date-fns'
@@ -56,10 +56,12 @@ const Books: React.FC = () => {
   const [books, setBooks] = useState<BookProps[] | undefined>()
   const [pages, setPages] = useState<number[]>([])
   const [maxPages, setMaxPages] = useState<number>()
-  const [totalItems, setTotalItems] = useState<number>()
+  const [totalItems, setTotalItems] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>()
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const searchTermInputRef = useRef<HTMLInputElement>(null)
 
   const history = useHistory()
 
@@ -73,21 +75,8 @@ const Books: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (totalItems) {
-      setPages(calculatePages(totalItems))
-    }
-  }, [maxPages])
-
-  useEffect(() => {
-    searchBooks()
-  }, [currentPage])
-
-  const handleSearchTermChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value)
-    },
-    []
-  )
+    setPages(calculatePages())
+  }, [maxPages, totalItems])
 
   const calculateMaxPages = useCallback(() => {
     const PAGE_DIVIDER = 80
@@ -97,8 +86,8 @@ const Books: React.FC = () => {
     setMaxPages(maxPages)
   }, [])
 
-  const calculatePages = (totalItems: number) => {
-    if (!currentPage || !maxPages) return []
+  const calculatePages = () => {
+    if (!currentPage || !totalItems || !maxPages) return []
 
     const min = 1
     const total = Math.ceil(totalItems / MAX_RESULTS)
@@ -113,50 +102,52 @@ const Books: React.FC = () => {
     return Array.from({ length }, (el, i) => start + i)
   }
 
-  const searchBooks = useCallback(async () => {
-    if (!currentPage) return
+  const searchBooks = useCallback(
+    async (search: string, page: number) => {
+      setLoading(true)
+      const startIndex = (page - 1) * 10
 
-    if (!searchTerm) {
-      toast.error(`Search term can't be empty`)
-      return
-    }
+      setSearchTerm(search)
+      setCurrentPage(page)
 
-    setLoading(true)
-    const startIndex = (currentPage - 1) * 10
+      try {
+        const response = await api.get<BooksApiResponse>(
+          `/volumesaaaa?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
+        )
 
-    try {
-      const response = await api.get<BooksApiResponse>(
-        `/volumes?q=${searchTerm}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
-      )
+        if (response.status !== 200) {
+          throw new Error()
+        }
 
-      if (response.status !== 200) {
-        throw new Error()
+        const totalItems = response.data.totalItems
+        setTotalItems(totalItems)
+
+        const items = totalItems === 0 ? [] : response.data.items
+
+        setBooks(items)
+        setLoading(false)
+      } catch (err) {
+        toast.error('Failed to load books')
+        setLoading(false)
       }
-      const totalItems = response.data.totalItems
-      setTotalItems(totalItems)
-      setPages(calculatePages(totalItems))
-
-      const items = totalItems === 0 ? [] : response.data.items
-
-      setBooks(items)
-      setLoading(false)
-    } catch (err) {
-      toast.error('Failed to load books')
-      setLoading(false)
-    }
-  }, [searchTerm, currentPage])
+    },
+    [currentPage, totalItems]
+  )
 
   const handleSearchFormSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault()
-      if (currentPage === 1) {
-        searchBooks()
+
+      const searchTermTemp = searchTermInputRef.current?.value ?? ''
+
+      if (!searchTermTemp) {
+        toast.error(`Search term can't be empty`)
         return
       }
 
-      setCurrentPage(1)
+      searchBooks(searchTermTemp, 1)
     },
-    [currentPage, searchBooks]
+    [searchBooks, searchTermInputRef]
   )
 
   return (
@@ -168,11 +159,7 @@ const Books: React.FC = () => {
           <strong>Books</strong>
         </header>
         <SubHeader onSubmit={handleSearchFormSubmit}>
-          <Input
-            placeholder="Type your search here"
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-          />
+          <Input ref={searchTermInputRef} placeholder="Type your search here" />
           <Button primary type="submit">
             Search
           </Button>
@@ -247,7 +234,11 @@ const Books: React.FC = () => {
                 <li
                   data-testid="page_test"
                   key={page}
-                  onClick={() => setCurrentPage(page)}
+                  onClick={() => {
+                    if (page !== currentPage) {
+                      searchBooks(searchTerm, page)
+                    }
+                  }}
                   className={currentPage === page ? 'active' : undefined}
                 >
                   {page}
