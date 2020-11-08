@@ -55,7 +55,7 @@ const Book: React.FC = () => {
       <Content>
         <header>
           <BackButton onClick={() => history.goBack()}>
-            <FiArrowLeft size={30} color="#949494" />
+            <FiArrowLeft size={30} color="#3f3d56" />
           </BackButton>
 
           <strong>Book details</strong>

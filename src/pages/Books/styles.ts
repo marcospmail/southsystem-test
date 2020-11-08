@@ -20,9 +20,9 @@ export const Content = styled.main`
     justify-content: space-between;
 
     strong {
-      font-size: 24px;
+      font-size: 34px;
       font-weight: bold;
-      color: #949494;
+      color: #3f3d56;
     }
 
     button:first-child {
@@ -61,7 +61,7 @@ export const BooksContainer = styled.section`
     cursor: pointer;
 
     &:hover {
-      border: 1px solid #666;
+      border: 1px solid #3f3d56;
     }
 
     > img {
@@ -124,7 +124,7 @@ export const Paginator = styled.ul`
   flex-direction: row;
 
   > li {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
@@ -132,6 +132,11 @@ export const Paginator = styled.ul`
     margin-left: 3px;
     color: #9c9c9c;
     font-weight: bold;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #ddd;
+    }
 
     &.active {
       background-color: #ddd;

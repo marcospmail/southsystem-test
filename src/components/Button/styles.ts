@@ -17,10 +17,10 @@ export const Button = styled.button`
   }
 
   &.primary {
-    background: #4167df;
+    background: #3f3d56;
 
     &:hover {
-      background: ${darken(0.1, '#4167df')};
+      background: ${darken(0.1, '#3f3d56')};
     }
   }
 `

@@ -13,7 +13,7 @@ export const Container = styled.div`
 
   > span {
     color: #3f3d56;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     padding: 20px;
   }

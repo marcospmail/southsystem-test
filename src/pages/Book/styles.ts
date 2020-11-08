@@ -18,10 +18,9 @@ export const Content = styled.div`
     align-items: center;
 
     strong {
-      font-size: 24px;
+      font-size: 34px;
       font-weight: bold;
-      color: #949494;
-      margin-left: 30px;
+      color: #3f3d56;
     }
 
     button:first-child {
