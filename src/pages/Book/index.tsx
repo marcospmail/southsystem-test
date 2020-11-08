@@ -12,14 +12,8 @@ import api from '../../config/api'
 
 import nothingFoundImg from '../../assets/nothing-found.svg'
 
-import {
-  BackButton,
-  Container,
-  Content,
-  Details,
-  EmptyData,
-  Loading,
-} from './styles'
+import { BackButton, Container, Content, Details } from './styles'
+import Card from '../../components/Card'
 
 interface ParamTypes {
   id?: string
@@ -67,14 +61,13 @@ const Book: React.FC = () => {
           <strong>Book details</strong>
         </header>
 
-        {loading ? (
-          <Loading>Loading...</Loading>
-        ) : !book ? (
-          <EmptyData>
-            <img src={nothingFoundImg} />
-            <span>{`There's nothing here`}</span>
-          </EmptyData>
-        ) : (
+        {loading && <Card text="Loading..." />}
+
+        {!loading && !book && (
+          <Card imgSrc={nothingFoundImg} text="There's nothing here" />
+        )}
+
+        {!loading && book && (
           <Details>
             <img
               src={book?.volumeInfo.imageLinks.medium}

@@ -5,12 +5,14 @@ import React, {
   FormEvent,
   useRef,
 } from 'react'
+
 import { useHistory } from 'react-router-dom'
 import { format, parseISO, isValid } from 'date-fns'
 
 import Header from '../../components/Header'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
+import Card from '../../components/Card'
 
 import api from '../../config/api'
 
@@ -21,9 +23,6 @@ import {
   BooksContainer,
   Container,
   Content,
-  EmptyData,
-  Loading,
-  MakeASearchIndicator,
   Paginator,
   SubHeader,
 } from './styles'
@@ -166,23 +165,22 @@ const Books: React.FC = () => {
           </Button>
         </SubHeader>
 
-        {loading && <Loading>Loading...</Loading>}
+        {loading && <Card style={{ marginTop: 20 }} text="Loading..." />}
 
         {!loading && !books && (
-          <MakeASearchIndicator>
-            <img src={readingImg} />
-            <span>Search something</span>
-          </MakeASearchIndicator>
+          <Card
+            style={{ marginTop: 20 }}
+            imgSrc={readingImg}
+            text="Search something"
+          />
         )}
 
         {!loading && books && books?.length === 0 && (
-          <EmptyData>
-            <span>
-              Nothing found. <br />
-              Maybe try a different title?
-            </span>
-            <img src={nothingFoundImg} />
-          </EmptyData>
+          <Card
+            style={{ marginTop: 20 }}
+            imgSrc={nothingFoundImg}
+            text="Nothing found. Maybe try a different title?"
+          />
         )}
 
         {!loading && books?.length != null && books?.length > 0 && (

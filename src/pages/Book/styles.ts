@@ -85,37 +85,3 @@ export const Details = styled.main`
     margin-top: 5px;
   }
 `
-
-export const Loading = styled.span`
-  background: #fff;
-  margin-top: 20px;
-  padding: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  font-weight: bold;
-  color: #3f3d56;
-  min-height: 420px;
-`
-
-export const EmptyData = styled.div`
-  background: #fff;
-  margin-top: 20px;
-  padding: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  > img {
-    width: 300px;
-  }
-
-  > span {
-    width: 270px;
-    margin: 0 0 100px 30px;
-    color: #3f3d56;
-    font-size: 40px;
-    font-weight: bold;
-  }
-`
