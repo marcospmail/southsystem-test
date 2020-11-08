@@ -51,7 +51,6 @@ export const Details = styled.main`
   background: #fff;
   padding: 30px;
   border-radius: 4px;
-  margin-top: 20px;
   line-height: 26px;
   min-height: 420px;
   color: #949494;
@@ -59,7 +58,9 @@ export const Details = styled.main`
   img {
     float: left;
     align-self: flex-start;
-    height: 360px;
+    width: 260px;
+    /* height: 360px; */
+    object-fit: cover;
     margin-right: 10px;
   }
 
