@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { isValid, format, parseISO } from 'date-fns'
 import { FiArrowLeft } from 'react-icons/fi'
+import { toast } from 'react-toastify'
+
+import { BookProps } from '../Books'
 
 import Header from '../../components/Header'
 
 import api from '../../config/api'
 
-import { BookProps } from '../Books'
+import nothingFoundImg from '../../assets/nothing-found.svg'
 
-import { BackButton, Container, Content, Details } from './styles'
+import { BackButton, Container, Content, Details, EmptyData } from './styles'
 
 interface ParamTypes {
   id?: string
@@ -23,10 +26,16 @@ const Book: React.FC = () => {
 
   useEffect(() => {
     const fetchBookData = async () => {
-      const response = await api.get<BookProps>(`/volumes/${id}`)
+      try {
+        const response = await api.get<BookProps>(`/volumes/${id}`)
 
-      if (response.status === 200) {
+        if (response.status !== 200) {
+          throw new Error()
+        }
+
         setBook(response.data)
+      } catch (err) {
+        toast.error('Failed to load book')
       }
     }
 
@@ -46,31 +55,56 @@ const Book: React.FC = () => {
           <strong>Book details</strong>
         </header>
 
-        <Details>
-          <img
-            src={book?.volumeInfo.imageLinks.medium}
-            alt={book?.volumeInfo.title}
-          />
+        {book ? (
+          <Details>
+            <>
+              <img
+                src={book?.volumeInfo.imageLinks.medium}
+                alt={book?.volumeInfo.title}
+              />
 
-          <div id="detailsText">
-            <strong id="title">{book?.volumeInfo.title}</strong>
-            <strong id="subtitle">{book?.volumeInfo.subtitle}</strong>
+              <strong id="title">{book?.volumeInfo.title}</strong>
+              <strong id="subtitle">{book?.volumeInfo.subtitle}</strong>
 
-            <strong>AUTHOR</strong>
-            <span>{book?.volumeInfo.authors?.join(', ')}</span>
+              {book?.volumeInfo.authors && (
+                <>
+                  <strong>
+                    {book?.volumeInfo.authors?.length > 1
+                      ? 'AUTHORS'
+                      : 'AUTHOR'}
+                  </strong>
+                  <span>{book?.volumeInfo.authors?.join(', ')}</span>
+                </>
+              )}
 
-            <strong>DATE</strong>
-            <span>
-              {book?.volumeInfo?.publishedDate &&
-              isValid(parseISO(book.volumeInfo?.publishedDate))
-                ? format(parseISO(book.volumeInfo?.publishedDate), 'dd/MM/yyyy')
-                : book?.volumeInfo.publishedDate}
-            </span>
+              {book?.volumeInfo?.publishedDate && (
+                <>
+                  <strong>DATE</strong>
+                  <span>
+                    {isValid(parseISO(book.volumeInfo?.publishedDate))
+                      ? format(
+                          parseISO(book.volumeInfo?.publishedDate),
+                          'dd/MM/yyyy'
+                        )
+                      : book?.volumeInfo.publishedDate}
+                  </span>
+                </>
+              )}
 
-            <strong>DESCRIPTION</strong>
-            <span>{book?.volumeInfo.description}</span>
-          </div>
-        </Details>
+              {book?.volumeInfo.description && (
+                <>
+                  <strong>DESCRIPTION</strong>
+                  <span>{book?.volumeInfo.description}</span>
+                </>
+              )}
+            </>
+          </Details>
+        ) : (
+          <EmptyData>
+            <img src={nothingFoundImg} />
+            <span>{`There's nothing here`}</span>
+          </EmptyData>
+        )}
       </Content>
     </Container>
   )

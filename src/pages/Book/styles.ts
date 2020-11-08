@@ -54,6 +54,8 @@ export const Details = styled.main`
   border-radius: 4px;
   margin-top: 20px;
   line-height: 26px;
+  min-height: 420px;
+  color: #949494;
 
   img {
     float: left;
@@ -62,28 +64,45 @@ export const Details = styled.main`
     margin-right: 10px;
   }
 
-  #detailsText {
-    min-height: 360px;
+  strong {
+    margin-top: 20px;
+    display: block;
+    color: #3f3d56;
+  }
 
-    strong {
-      margin-top: 20px;
-      display: block;
-    }
+  span {
+    font-weight: bold;
+  }
 
-    span {
-      font-weight: bold;
-      color: #949494;
-    }
+  #title {
+    margin-top: 0px;
+    font-size: 28px;
+  }
 
-    #title {
-      margin-top: 0px;
-      font-size: 28px;
-    }
+  #subtitle {
+    color: #949494;
+    font-size: 20px;
+    margin-top: 5px;
+  }
+`
 
-    #subtitle {
-      font-size: 20px;
-      margin-top: 5px;
-      color: #949494;
-    }
+export const EmptyData = styled.div`
+  background: #fff;
+  margin-top: 20px;
+  padding: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > img {
+    width: 300px;
+  }
+
+  > span {
+    width: 270px;
+    margin: 0 0 100px 30px;
+    color: #3f3d56;
+    font-size: 40px;
+    font-weight: bold;
   }
 `
