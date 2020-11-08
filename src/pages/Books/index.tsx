@@ -112,7 +112,7 @@ const Books: React.FC = () => {
 
       try {
         const response = await api.get<BooksApiResponse>(
-          `/volumesaaaa?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
+          `/volumes?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
         )
 
         if (response.status !== 200) {
@@ -129,6 +129,7 @@ const Books: React.FC = () => {
       } catch (err) {
         toast.error('Failed to load books')
         setLoading(false)
+        setBooks([])
       }
     },
     [currentPage, totalItems]
