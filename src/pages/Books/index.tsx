@@ -5,9 +5,9 @@ import React, {
   FormEvent,
   useRef,
 } from 'react'
-
 import { useHistory } from 'react-router-dom'
 import { format, parseISO, isValid } from 'date-fns'
+import { toast } from 'react-toastify'
 
 import Header from '../../components/Header'
 import Input from '../../components/Input'
@@ -15,6 +15,11 @@ import Button from '../../components/Button'
 import Card from '../../components/Card'
 
 import api from '../../config/api'
+
+import {
+  restoreFromLocalStorage,
+  saveToLocalStorage,
+} from '../../utils/localStorage'
 
 import nothingFoundImg from '../../assets/nothing-found.svg'
 import readingImg from '../../assets/reading.svg'
@@ -26,7 +31,6 @@ import {
   Paginator,
   SubHeader,
 } from './styles'
-import { toast } from 'react-toastify'
 
 export interface BookProps {
   id: string
@@ -52,41 +56,74 @@ interface BooksApiResponse {
 const MAX_RESULTS = 10
 
 const Books: React.FC = () => {
-  const [books, setBooks] = useState<BookProps[] | undefined>()
-  const [pages, setPages] = useState<number[]>([])
-  const [maxPages, setMaxPages] = useState<number>()
-  const [totalItems, setTotalItems] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>()
-  const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
+  const [pages, setPages] = useState<number[]>([])
+
+  const [searchTerm, setSearchTerm] = useState(() => {
+    return restoreFromLocalStorage('books:searchTerm')
+  })
+
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    return restoreFromLocalStorage('books:currentPage')
+  })
+
+  const [totalItems, setTotalItems] = useState<number>(() => {
+    return restoreFromLocalStorage('books:totalItems')
+  })
+
+  const [books, setBooks] = useState<BookProps[] | undefined>(() => {
+    return restoreFromLocalStorage('books:books')
+  })
 
   const searchTermInputRef = useRef<HTMLInputElement>(null)
 
   const history = useHistory()
 
   useEffect(() => {
-    calculateMaxPages()
-
-    window.addEventListener('resize', calculateMaxPages)
+    window.addEventListener('resize', calculatePages)
     return () => {
-      window.removeEventListener('resize', calculateMaxPages)
+      window.removeEventListener('resize', calculatePages)
     }
   }, [])
 
   useEffect(() => {
-    setPages(calculatePages())
-  }, [maxPages, totalItems])
+    if (searchTermInputRef.current) {
+      searchTermInputRef.current.value = searchTerm
+    }
+  }, [searchTermInputRef])
+
+  useEffect(() => {
+    calculatePages()
+  }, [totalItems])
+
+  useEffect(() => {
+    saveToLocalStorage('books:books', JSON.stringify(books))
+  }, [books])
+
+  useEffect(() => {
+    saveToLocalStorage('books:totalItems', JSON.stringify(totalItems))
+  }, [totalItems])
+
+  useEffect(() => {
+    saveToLocalStorage('books:currentPage', JSON.stringify(currentPage))
+  }, [currentPage])
+
+  useEffect(() => {
+    saveToLocalStorage('books:searchTerm', JSON.stringify(searchTerm))
+  }, [searchTerm])
 
   const calculateMaxPages = useCallback(() => {
     const PAGE_DIVIDER = 80
     const MAX_PAGES = 15
 
     const maxPages = Math.min(window.innerWidth / PAGE_DIVIDER, MAX_PAGES)
-    setMaxPages(maxPages)
+    return maxPages
   }, [])
 
   const calculatePages = () => {
-    if (!currentPage || !totalItems || !maxPages) return []
+    if (!currentPage || !totalItems) return []
+
+    const maxPages = calculateMaxPages()
 
     const min = 1
     const total = Math.ceil(totalItems / MAX_RESULTS)
@@ -98,7 +135,8 @@ const Books: React.FC = () => {
     start = Math.max(start, min)
     start = Math.min(start, min + total - length)
 
-    return Array.from({ length }, (el, i) => start + i)
+    const pages = Array.from({ length }, (el, i) => start + i)
+    setPages(pages)
   }
 
   const searchBooks = useCallback(
@@ -121,9 +159,9 @@ const Books: React.FC = () => {
         const totalItems = response.data.totalItems
         setTotalItems(totalItems)
 
-        const items = totalItems === 0 ? [] : response.data.items
+        const books = totalItems === 0 ? [] : response.data.items
 
-        setBooks(items)
+        setBooks(books)
         setLoading(false)
       } catch (err) {
         toast.error('Failed to load books')
