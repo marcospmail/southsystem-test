@@ -95,7 +95,7 @@ export const BooksContainer = styled.section`
       .book-title {
         max-height: 50%;
         font-weight: bold;
-        color: #666;
+        color: #3f3d56;
         font-size: 18px;
         display: -webkit-box;
         -webkit-line-clamp: 3;
