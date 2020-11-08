@@ -86,6 +86,19 @@ export const Details = styled.main`
   }
 `
 
+export const Loading = styled.span`
+  background: #fff;
+  margin-top: 20px;
+  padding: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: bold;
+  color: #3f3d56;
+  min-height: 420px;
+`
+
 export const EmptyData = styled.div`
   background: #fff;
   margin-top: 20px;
