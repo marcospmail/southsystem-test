@@ -14,11 +14,16 @@ import Button from '../../components/Button'
 
 import api from '../../config/api'
 
+import nothingFoundImg from '../../assets/nothing-found.svg'
+import readingImg from '../../assets/reading.svg'
+
 import {
   BooksContainer,
   Container,
   Content,
   EmptyData,
+  Loading,
+  MakeASearchIndicator,
   Paginator,
   SubHeader,
 } from './styles'
@@ -48,12 +53,13 @@ interface BooksApiResponse {
 const MAX_RESULTS = 10
 
 const Books: React.FC = () => {
-  const [books, setBooks] = useState<BookProps[] | undefined>([])
+  const [books, setBooks] = useState<BookProps[] | undefined>()
   const [pages, setPages] = useState<number[]>([])
   const [maxPages, setMaxPages] = useState<number>()
   const [totalItems, setTotalItems] = useState<number>()
   const [currentPage, setCurrentPage] = useState<number>()
   const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const history = useHistory()
 
@@ -115,17 +121,28 @@ const Books: React.FC = () => {
       return
     }
 
+    setLoading(true)
     const startIndex = (currentPage - 1) * 10
 
-    const response = await api.get<BooksApiResponse>(
-      `/volumes?q=${searchTerm}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
-    )
-    if (response.status === 200) {
-      const totalItems = response.data.totalItems
+    try {
+      const response = await api.get<BooksApiResponse>(
+        `/volumes?q=${searchTerm}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
+      )
 
-      setBooks(response.data.items)
+      if (response.status !== 200) {
+        throw new Error()
+      }
+      const totalItems = response.data.totalItems
       setTotalItems(totalItems)
       setPages(calculatePages(totalItems))
+
+      const items = totalItems === 0 ? [] : response.data.items
+
+      setBooks(items)
+      setLoading(false)
+    } catch (err) {
+      toast.error('Failed to load books')
+      setLoading(false)
     }
   }, [searchTerm, currentPage])
 
@@ -150,7 +167,6 @@ const Books: React.FC = () => {
         <header>
           <strong>Books</strong>
         </header>
-
         <SubHeader onSubmit={handleSearchFormSubmit}>
           <Input
             placeholder="Type your search here"
@@ -162,10 +178,29 @@ const Books: React.FC = () => {
           </Button>
         </SubHeader>
 
-        {books?.length ? (
+        {loading && <Loading>Loading...</Loading>}
+
+        {!loading && !books && (
+          <MakeASearchIndicator>
+            <img src={readingImg} />
+            <span>Search something</span>
+          </MakeASearchIndicator>
+        )}
+
+        {!loading && books && books?.length === 0 && (
+          <EmptyData>
+            <span>
+              Nothing found. <br />
+              Maybe try a different title?
+            </span>
+            <img src={nothingFoundImg} />
+          </EmptyData>
+        )}
+
+        {!loading && books?.length != null && books?.length > 0 && (
           <>
             <BooksContainer>
-              {books.map(book => (
+              {books?.map(book => (
                 <article
                   key={book.id}
                   onClick={() => history.push(`/books/${book.id}`)}
@@ -220,10 +255,6 @@ const Books: React.FC = () => {
               ))}
             </Paginator>
           </>
-        ) : (
-          <EmptyData>
-            <span>Nada encontado :(</span>
-          </EmptyData>
         )}
       </Content>
     </Container>
