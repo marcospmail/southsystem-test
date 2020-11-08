@@ -206,10 +206,19 @@ const Books: React.FC = () => {
 
                   <div className="book-details">
                     <span className="book-title"> {book.volumeInfo.title}</span>
-                    <span className="book-authors">
-                      <strong>Authors: </strong>
-                      {book.volumeInfo.authors?.join(', ')}
-                    </span>
+
+                    {book.volumeInfo.authors &&
+                      book.volumeInfo.authors.length > 0 && (
+                        <span className="book-authors">
+                          <strong>
+                            {book.volumeInfo.authors?.length > 1
+                              ? 'Authors: '
+                              : 'Author: '}{' '}
+                          </strong>
+                          {book.volumeInfo.authors?.join(', ')}
+                        </span>
+                      )}
+
                     <span className="book-publish">
                       <strong>Publisher: </strong>
                       {book.volumeInfo.publisher}
