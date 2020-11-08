@@ -22,6 +22,7 @@ import {
   Paginator,
   SubHeader,
 } from './styles'
+import { toast } from 'react-toastify'
 
 export interface BookProps {
   id: string
@@ -61,8 +62,33 @@ const Books: React.FC = () => {
     []
   )
 
+  const calculatePages = (totalItems: number) => {
+    if (!currentPage) return []
+
+    const min = 1
+    const total = Math.ceil(totalItems / MAX_RESULTS)
+    let length = MAX_RESULTS
+
+    if (length > total) length = total
+
+    let start = currentPage - Math.floor(length / 2)
+    start = Math.max(start, min)
+    start = Math.min(start, min + total - length)
+
+    return Array.from({ length }, (el, i) => start + i)
+  }
+
+  useEffect(() => {
+    searchBooks()
+  }, [currentPage])
+
   const searchBooks = useCallback(async () => {
     if (!currentPage) return
+
+    if (!searchTerm) {
+      toast.error(`Search term can't be empty`)
+      return
+    }
 
     const startIndex = (currentPage - 1) * 10
 
@@ -85,28 +111,8 @@ const Books: React.FC = () => {
 
       setCurrentPage(1)
     },
-    [currentPage]
+    [currentPage, searchBooks]
   )
-
-  const calculatePages = (totalItems: number) => {
-    if (!currentPage) return []
-
-    const min = 1
-    const total = Math.ceil(totalItems / MAX_RESULTS)
-    let length = MAX_RESULTS
-
-    if (length > total) length = total
-
-    let start = currentPage - Math.floor(length / 2)
-    start = Math.max(start, min)
-    start = Math.min(start, min + total - length)
-
-    return Array.from({ length }, (el, i) => start + i)
-  }
-
-  useEffect(() => {
-    searchBooks()
-  }, [currentPage])
 
   return (
     <Container>
