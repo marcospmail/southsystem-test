@@ -5,23 +5,11 @@ export const Container = styled.div`
   flex-direction: column;
   height: 100vh;
 `
-
-export const SubHeader = styled.form`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-
-  input {
-    flex: 1;
-  }
-`
-
 export const Content = styled.main`
   width: 100%;
   max-width: 860px;
-  height: 100vh;
-  margin: 0 auto;
   padding: 30px;
+  margin: 0 auto;
 
   display: flex;
   flex-direction: column;
@@ -40,6 +28,21 @@ export const Content = styled.main`
     button:first-child {
       margin-right: 10px;
     }
+  }
+`
+
+export const SubHeader = styled.form`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+
+  input {
+    flex: 1;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
   }
 `
 

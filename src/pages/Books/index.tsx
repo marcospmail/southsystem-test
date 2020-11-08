@@ -50,10 +50,31 @@ const MAX_RESULTS = 10
 const Books: React.FC = () => {
   const [books, setBooks] = useState<BookProps[] | undefined>([])
   const [pages, setPages] = useState<number[]>([])
+  const [maxPages, setMaxPages] = useState<number>()
+  const [totalItems, setTotalItems] = useState<number>()
   const [currentPage, setCurrentPage] = useState<number>()
   const [searchTerm, setSearchTerm] = useState('')
 
   const history = useHistory()
+
+  useEffect(() => {
+    calculateMaxPages()
+
+    window.addEventListener('resize', calculateMaxPages)
+    return () => {
+      window.removeEventListener('resize', calculateMaxPages)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (totalItems) {
+      setPages(calculatePages(totalItems))
+    }
+  }, [maxPages])
+
+  useEffect(() => {
+    searchBooks()
+  }, [currentPage])
 
   const handleSearchTermChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,12 +83,20 @@ const Books: React.FC = () => {
     []
   )
 
+  const calculateMaxPages = useCallback(() => {
+    const PAGE_DIVIDER = 80
+    const MAX_PAGES = 15
+
+    const maxPages = Math.min(window.innerWidth / PAGE_DIVIDER, MAX_PAGES)
+    setMaxPages(maxPages)
+  }, [])
+
   const calculatePages = (totalItems: number) => {
-    if (!currentPage) return []
+    if (!currentPage || !maxPages) return []
 
     const min = 1
     const total = Math.ceil(totalItems / MAX_RESULTS)
-    let length = MAX_RESULTS
+    let length = maxPages
 
     if (length > total) length = total
 
@@ -77,10 +106,6 @@ const Books: React.FC = () => {
 
     return Array.from({ length }, (el, i) => start + i)
   }
-
-  useEffect(() => {
-    searchBooks()
-  }, [currentPage])
 
   const searchBooks = useCallback(async () => {
     if (!currentPage) return
@@ -96,8 +121,11 @@ const Books: React.FC = () => {
       `/volumes?q=${searchTerm}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
     )
     if (response.status === 200) {
+      const totalItems = response.data.totalItems
+
       setBooks(response.data.items)
-      setPages(calculatePages(response.data.totalItems))
+      setTotalItems(totalItems)
+      setPages(calculatePages(totalItems))
     }
   }, [searchTerm, currentPage])
 

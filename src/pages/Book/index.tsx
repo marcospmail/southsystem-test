@@ -27,8 +27,6 @@ const Book: React.FC = () => {
 
       if (response.status === 200) {
         setBook(response.data)
-
-        console.log(response.data.volumeInfo.imageLinks.medium)
       }
     }
 
