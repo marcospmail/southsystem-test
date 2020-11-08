@@ -23,9 +23,7 @@ const Book: React.FC = () => {
 
   useEffect(() => {
     const fetchBookData = async () => {
-      const response = await api.get<BookProps>(
-        `/volumes/${id}?key=AIzaSyCLKOg-29zAFNtvwD1Ue0wFyZb5CGO9eVU`
-      )
+      const response = await api.get<BookProps>(`/volumes/${id}`)
 
       if (response.status === 200) {
         setBook(response.data)
