@@ -10,16 +10,13 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  strong {
-    color: #fff;
-    font-weight: bold;
-    font-size: 30px;
-  }
+  > a {
+    text-decoration: none;
 
-  button {
-    background: transparent;
-    border: 0;
-    color: #fff;
-    font-weight: bold;
+    > strong {
+      color: #fff;
+      font-weight: bold;
+      font-size: 30px;
+    }
   }
 `
