@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, render, waitFor, screen, act } from '@testing-library/react'
+import { fireEvent, render, waitFor, screen } from '@testing-library/react'
 import MockAdapter from 'axios-mock-adapter'
 import generateBook from '../data/bookGenerator'
 
@@ -179,6 +179,68 @@ describe('Books Page', () => {
 
     await waitFor(() => {
       expect(container).toHaveTextContent(/Book details page/)
+    })
+  })
+
+  it('should save onlyFavorites state in localStorage on filter click', async () => {
+    const setLocalStorageItemFunction = jest.spyOn(Storage.prototype, 'setItem')
+
+    const { getByTestId } = render(<Books />)
+
+    const filterOnlyFavorites = getByTestId('testid_filteronlyfavorites-svg')
+
+    fireEvent.click(filterOnlyFavorites)
+
+    await waitFor(() => {
+      expect(filterOnlyFavorites).toHaveAttribute('color', '#3f3d56')
+      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books:onlyFavorites',
+        JSON.stringify(true)
+      )
+    })
+
+    fireEvent.click(filterOnlyFavorites)
+
+    await waitFor(() => {
+      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books:onlyFavorites',
+        JSON.stringify(false)
+      )
+    })
+  })
+
+  it('should favorite/unfavorite a book on favorite button click', async () => {
+    const books = generateBooks(10)
+    mockBooksGetApi(100, books)
+
+    const { getAllByTestId } = render(<Books />)
+
+    const searchButtonComponent = screen.getByText('Search')
+    const input = screen.getByPlaceholderText('Type your search here')
+
+    fireEvent.change(input, { target: { value: 'fever' } })
+    fireEvent.click(searchButtonComponent)
+
+    const setLocalStorageItemFunction = jest.spyOn(Storage.prototype, 'setItem')
+
+    await waitFor(() => {
+      fireEvent.click(getAllByTestId('testid_favorite-svg')[0])
+    })
+
+    await waitFor(() => {
+      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books:favorites',
+        JSON.stringify([books[0]])
+      )
+    })
+
+    fireEvent.click(getAllByTestId('testid_favorite-svg')[0])
+
+    await waitFor(() => {
+      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books:favorites',
+        JSON.stringify([])
+      )
     })
   })
 })
