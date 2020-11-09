@@ -33,7 +33,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll false --testPathIgnorePatterns=src/__tests__/data",
+    "test:coverage": "yarn test --coverage " ,
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -64,5 +65,11 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.1.2",
     "react-test-renderer": "^17.0.1"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/pages/**/*.tsx",
+      "src/components/**/*.tsx"
+    ]
   }
 }
