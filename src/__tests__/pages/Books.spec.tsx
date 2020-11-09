@@ -72,6 +72,10 @@ describe('Books Page', () => {
   })
 
   it('should show books returned from search filter', async () => {
+    const totalItems = 100
+    const booksCount = 10
+    mockBooksGetApi(totalItems, generateBooks(booksCount))
+
     const { container, getByText, getByPlaceholderText } = render(<Books />)
 
     const searchButtonComponent = getByText('Search')
@@ -81,7 +85,9 @@ describe('Books Page', () => {
     fireEvent.click(searchButtonComponent)
 
     await waitFor(() => {
-      expect(container.querySelectorAll('.book-title').length).toEqual(10)
+      expect(container.querySelectorAll('.book-title').length).toEqual(
+        booksCount
+      )
     })
   })
 
@@ -124,7 +130,7 @@ describe('Books Page', () => {
     })
   })
 
-  it('should restore local storage data on refresh', async () => {
+  it('should restore local storage data on page load', async () => {
     const searchTerm = 'fever'
     const books = generateBooks(10)
     const totalItems = 100
