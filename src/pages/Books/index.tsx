@@ -42,7 +42,7 @@ export interface BookProps {
     publisher: string
     publishedDate?: string
     imageLinks: {
-      smallThumbnail: string
+      thumbnail: string
       medium: string
     }
   }
@@ -226,12 +226,13 @@ const Books: React.FC = () => {
             <BooksContainer>
               {books?.map(book => (
                 <article
+                  data-testid="testid_book-container"
                   key={book.id}
                   onClick={() => history.push(`/books/${book.id}`)}
                 >
-                  {book.volumeInfo.imageLinks?.smallThumbnail ? (
+                  {book.volumeInfo.imageLinks?.thumbnail ? (
                     <img
-                      src={book.volumeInfo.imageLinks?.smallThumbnail}
+                      src={book.volumeInfo.imageLinks?.thumbnail}
                       alt={book.volumeInfo.title}
                     />
                   ) : (
@@ -241,7 +242,13 @@ const Books: React.FC = () => {
                   )}
 
                   <div className="book-details">
-                    <span className="book-title"> {book.volumeInfo.title}</span>
+                    <span
+                      data-testid="testid_book-title"
+                      className="book-title"
+                    >
+                      {' '}
+                      {book.volumeInfo.title}
+                    </span>
 
                     {book.volumeInfo.authors &&
                       book.volumeInfo.authors.length > 0 && (
