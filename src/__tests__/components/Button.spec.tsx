@@ -14,7 +14,7 @@ describe('Button Component', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should have #4167df background color if primary', () => {
+  it('should have #3f3d56 background color if primary', () => {
     const buttonText = 'Test'
 
     const { getByText } = render(<Button primary>{buttonText}</Button>)
