@@ -25,17 +25,6 @@ export const Content = styled.div`
       margin-right: 10px;
     }
   }
-
-  @media (max-width: 480px) {
-    header {
-      flex-direction: column;
-
-      * {
-        width: 100%;
-        margin-top: 5px;
-      }
-    }
-  }
 `
 
 export const BackButton = styled.button`
@@ -53,11 +42,11 @@ export const Details = styled.main`
   min-height: 420px;
   color: #949494;
 
-  img {
+  > img {
     float: left;
     align-self: flex-start;
     width: 260px;
-    height: 360px;
+    max-height: 360px;
     object-fit: cover;
     margin-right: 10px;
 
@@ -94,6 +83,14 @@ export const Details = styled.main`
 
       #title {
         margin-top: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 400px) {
+    & {
+      > img {
+        width: 100%;
       }
     }
   }
