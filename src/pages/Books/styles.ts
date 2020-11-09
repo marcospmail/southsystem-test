@@ -82,6 +82,10 @@ export const BooksContainer = styled.section`
     cursor: pointer;
     position: relative;
 
+    &.favorite {
+      border: 1px solid #3f3d56;
+    }
+
     &:hover {
       border: 1px solid #3f3d56;
     }

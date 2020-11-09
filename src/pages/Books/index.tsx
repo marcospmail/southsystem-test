@@ -313,74 +313,75 @@ const Books: React.FC = () => {
         {!loading && books?.length != null && books?.length > 0 && (
           <>
             <BooksContainer>
-              {books?.map(book => (
-                <article
-                  data-testid="testid_book-container"
-                  key={book.id}
-                  onClick={() => history.push(`/books/${book.id}`)}
-                >
-                  <FiStar
-                    data-testid="testid_favorite-svg"
-                    title="Click to favorite this book"
-                    size={20}
-                    color={
-                      favorites.some(fav => fav.id === book.id)
-                        ? '#3f3d56'
-                        : '#ddd'
-                    }
-                    onClick={e => {
-                      e.stopPropagation()
-                      handleToggleFavoriteBook(book)
-                    }}
-                  />
+              {books?.map(book => {
+                const favorite = favorites.some(fav => fav.id === book.id)
 
-                  <Image
-                    src={book.volumeInfo.imageLinks?.thumbnail}
-                    alt={book.volumeInfo.title}
-                  />
+                return (
+                  <article
+                    data-testid="testid_book-container"
+                    key={book.id}
+                    className={favorite ? 'favorite' : undefined}
+                    onClick={() => history.push(`/books/${book.id}`)}
+                  >
+                    <FiStar
+                      data-testid="testid_favorite-svg"
+                      title="Click to favorite this book"
+                      size={20}
+                      color={favorite ? '#3f3d56' : '#ddd'}
+                      onClick={e => {
+                        e.stopPropagation()
+                        handleToggleFavoriteBook(book)
+                      }}
+                    />
 
-                  <div className="book-details">
-                    <span
-                      data-testid="testid_book-title"
-                      className="book-title"
-                    >
-                      {' '}
-                      {book.volumeInfo.title}
-                    </span>
+                    <Image
+                      src={book.volumeInfo.imageLinks?.thumbnail}
+                      alt={book.volumeInfo.title}
+                    />
 
-                    {book.volumeInfo.authors &&
-                      book.volumeInfo.authors.length > 0 && (
-                        <span className="book-authors">
-                          <strong>
-                            {book.volumeInfo.authors?.length > 1
-                              ? 'Authors: '
-                              : 'Author: '}{' '}
-                          </strong>
-                          {book.volumeInfo.authors?.join(', ')}
+                    <div className="book-details">
+                      <span
+                        data-testid="testid_book-title"
+                        className="book-title"
+                      >
+                        {' '}
+                        {book.volumeInfo.title}
+                      </span>
+
+                      {book.volumeInfo.authors &&
+                        book.volumeInfo.authors.length > 0 && (
+                          <span className="book-authors">
+                            <strong>
+                              {book.volumeInfo.authors?.length > 1
+                                ? 'Authors: '
+                                : 'Author: '}{' '}
+                            </strong>
+                            {book.volumeInfo.authors?.join(', ')}
+                          </span>
+                        )}
+
+                      {book.volumeInfo.publisher && (
+                        <span className="book-publish">
+                          <strong>Publisher: </strong>
+                          {book.volumeInfo.publisher}
                         </span>
                       )}
 
-                    {book.volumeInfo.publisher && (
-                      <span className="book-publish">
-                        <strong>Publisher: </strong>
-                        {book.volumeInfo.publisher}
-                      </span>
-                    )}
-
-                    {book.volumeInfo.publishedDate && (
-                      <span className="book-publisheddate">
-                        <strong>Date: </strong>
-                        {isValid(parseISO(book.volumeInfo.publishedDate))
-                          ? format(
-                              parseISO(book.volumeInfo.publishedDate),
-                              'dd/MM/yyyy'
-                            )
-                          : book.volumeInfo.publishedDate}
-                      </span>
-                    )}
-                  </div>
-                </article>
-              ))}
+                      {book.volumeInfo.publishedDate && (
+                        <span className="book-publisheddate">
+                          <strong>Date: </strong>
+                          {isValid(parseISO(book.volumeInfo.publishedDate))
+                            ? format(
+                                parseISO(book.volumeInfo.publishedDate),
+                                'dd/MM/yyyy'
+                              )
+                            : book.volumeInfo.publishedDate}
+                        </span>
+                      )}
+                    </div>
+                  </article>
+                )
+              })}
             </BooksContainer>
 
             <Paginator>
