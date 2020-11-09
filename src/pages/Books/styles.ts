@@ -145,11 +145,12 @@ export const Paginator = styled.ul`
   flex-direction: row;
 
   > li {
-    border: 1px solid #ccc;
+    text-align: center;
+    border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
-    padding: 12px;
+    padding: 14px 16px;
     margin-left: 3px;
     color: #9c9c9c;
     font-weight: bold;
