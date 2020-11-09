@@ -9,6 +9,8 @@ import { BookProps } from '../Books'
 import Header from '../../components/Header'
 import Image from '../../components/Image'
 
+import { stripHtml } from '../../utils/text'
+
 import api from '../../config/api'
 
 import nothingFoundImg from '../../assets/nothing-found.svg'
@@ -38,7 +40,10 @@ const Book: React.FC = () => {
           throw new Error()
         }
 
-        setBook(response.data)
+        const book = response.data
+        book.volumeInfo.description = stripHtml(book.volumeInfo.description)
+
+        setBook(book)
         setLoading(false)
       } catch (err) {
         toast.error('Failed to load book')
