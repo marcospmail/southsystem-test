@@ -369,7 +369,7 @@ const Books: React.FC = () => {
 
                     {book.volumeInfo.publishedDate && (
                       <span className="book-publisheddate">
-                        <strong>Date: : </strong>
+                        <strong>Date: </strong>
                         {isValid(parseISO(book.volumeInfo.publishedDate))
                           ? format(
                               parseISO(book.volumeInfo.publishedDate),

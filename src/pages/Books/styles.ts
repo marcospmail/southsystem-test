@@ -82,14 +82,14 @@ export const BooksContainer = styled.section`
     cursor: pointer;
     position: relative;
 
+    &:hover {
+      border: 1px solid #3f3d56;
+    }
+
     > svg {
       position: absolute;
       top: 15px;
       right: 15px;
-    }
-
-    &:hover {
-      border: 1px solid #3f3d56;
     }
 
     > img {
@@ -130,7 +130,7 @@ export const BooksContainer = styled.section`
       }
 
       > span {
-        margin-top: 2px;
+        margin-top: 5px;
       }
     }
   }
