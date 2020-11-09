@@ -11,7 +11,12 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const Card: React.FC<CardProps> = ({ imgSrc, text, textStyle, ...rest }) => {
   return (
     <Container data-testid="testid_container" {...rest}>
-      <span style={{ ...textStyle }}>{text}</span>
+      <span
+        style={{ ...textStyle }}
+        className={imgSrc ? 'bottom-space' : undefined}
+      >
+        {text}
+      </span>
       {imgSrc && <img src={imgSrc} />}
     </Container>
   )

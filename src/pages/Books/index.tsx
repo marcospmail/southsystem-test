@@ -281,7 +281,10 @@ const Books: React.FC = () => {
           <Card
             style={{ marginTop: 20 }}
             text="Loading..."
-            textStyle={{ textAlign: 'center', fontSize: 30 }}
+            textStyle={{
+              textAlign: 'center',
+              fontSize: 30,
+            }}
           />
         )}
 

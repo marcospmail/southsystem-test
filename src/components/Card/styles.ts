@@ -26,8 +26,11 @@ export const Container = styled.div`
     > span {
       width: auto;
       padding: 0;
-      padding-bottom: 40px;
       font-size: 36px;
+
+      &.bottom-space {
+        margin-bottom: 40px;
+      }
     }
 
     > img {
