@@ -68,7 +68,7 @@ const Books: React.FC = () => {
   })
 
   const [searchTerm, setSearchTerm] = useState(() => {
-    return restoreFromLocalStorage('books:searchTerm')
+    return restoreFromLocalStorage('books:searchTerm') || ''
   })
 
   const [currentPage, setCurrentPage] = useState<number>(() => {
