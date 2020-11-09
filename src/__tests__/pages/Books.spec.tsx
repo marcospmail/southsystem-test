@@ -46,7 +46,7 @@ describe('Books Page', () => {
     fireEvent.click(searchButtonComponent)
 
     await waitFor(() => {
-      const pagesComponents = getAllByTestId('page_test')
+      const pagesComponents = getAllByTestId('testid_page-li')
 
       const BOOKS_PER_PAGE = 10
       expect(pagesComponents.length).toEqual(totalItems / BOOKS_PER_PAGE)

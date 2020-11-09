@@ -371,7 +371,7 @@ const Books: React.FC = () => {
             <Paginator>
               {pages.map(page => (
                 <li
-                  data-testid="page_test"
+                  data-testid="testid_page-li"
                   key={page}
                   onClick={() => {
                     if (page !== currentPage) {
