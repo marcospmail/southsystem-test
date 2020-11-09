@@ -20,6 +20,6 @@ describe('Empty', () => {
       </BrowserRouter>
     )
 
-    expect(screen.getByText(`You shouldn't be here`)).toBeInTheDocument()
+    expect(screen.getByText(`You shouldn't be here.`)).toBeInTheDocument()
   })
 })
