@@ -9,11 +9,7 @@ import { Container } from './styles'
 const Empty: React.FC = () => {
   return (
     <Container>
-      <Card
-        text="You shouldn't be here"
-        textStyle={{ fontSize: 80 }}
-        imgSrc={abductionImg}
-      />
+      <Card text="You shouldn't be here." imgSrc={abductionImg} />
     </Container>
   )
 }

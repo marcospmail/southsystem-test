@@ -277,13 +277,19 @@ const Books: React.FC = () => {
           </Button>
         </SubHeader>
 
-        {loading && <Card style={{ marginTop: 20 }} text="Loading..." />}
+        {loading && (
+          <Card
+            style={{ marginTop: 20 }}
+            text="Loading..."
+            textStyle={{ textAlign: 'center', fontSize: 30 }}
+          />
+        )}
 
         {!loading && !books && (
           <Card
             style={{ marginTop: 20 }}
             imgSrc={readingImg}
-            text="Search something"
+            text="Search something."
           />
         )}
 

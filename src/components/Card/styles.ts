@@ -7,28 +7,31 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
 
-  > img {
-    width: 300px;
-  }
-
   > span {
+    flex: 1;
+    font-size: 40px;
     color: #3f3d56;
-    font-size: 30px;
     font-weight: bold;
     padding: 20px;
+  }
+
+  > img {
+    flex: 1;
+    width: 300px;
   }
 
   @media (max-width: 640px) {
     flex-direction: column;
 
     > span {
+      width: auto;
       padding: 0;
       padding-bottom: 40px;
       font-size: 36px;
     }
 
     > img {
-      width: 180px;
+      width: 220px;
     }
   }
 

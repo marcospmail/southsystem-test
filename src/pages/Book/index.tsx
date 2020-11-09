@@ -67,7 +67,12 @@ const Book: React.FC = () => {
           <strong>Book details</strong>
         </header>
 
-        {loading && <Card text="Loading..." />}
+        {loading && (
+          <Card
+            text="Loading..."
+            textStyle={{ textAlign: 'center', fontSize: 30 }}
+          />
+        )}
 
         {!loading && !book && (
           <Card imgSrc={nothingFoundImg} text="There's nothing here" />
