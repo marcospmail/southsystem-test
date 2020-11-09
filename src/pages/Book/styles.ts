@@ -86,4 +86,15 @@ export const Details = styled.main`
     font-size: 20px;
     margin-top: 5px;
   }
+
+  @media (max-width: 640px) {
+    & {
+      display: flex;
+      flex-direction: column;
+
+      #title {
+        margin-top: 20px;
+      }
+    }
+  }
 `
