@@ -36,8 +36,12 @@ export const SubHeader = styled.form`
   justify-content: space-between;
   margin-top: 10px;
 
-  input {
+  div {
     flex: 1;
+
+    > svg {
+      cursor: pointer;
+    }
   }
 
   @media (max-width: 480px) {
@@ -59,6 +63,13 @@ export const BooksContainer = styled.section`
     background: #fff;
     transition: border 0.2s;
     cursor: pointer;
+    position: relative;
+
+    > svg {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
 
     &:hover {
       border: 1px solid #3f3d56;

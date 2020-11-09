@@ -8,6 +8,7 @@ import React, {
 import { useHistory } from 'react-router-dom'
 import { format, parseISO, isValid } from 'date-fns'
 import { toast } from 'react-toastify'
+import { FiStar } from 'react-icons/fi'
 
 import Header from '../../components/Header'
 import Input from '../../components/Input'
@@ -42,7 +43,7 @@ export interface BookProps {
     authors?: string[]
     publisher: string
     publishedDate?: string
-    imageLinks: {
+    imageLinks?: {
       thumbnail: string
       medium: string
     }
@@ -57,8 +58,14 @@ interface BooksApiResponse {
 const MAX_RESULTS = 10
 
 const Books: React.FC = () => {
+  const didMount = useRef(false)
+
   const [loading, setLoading] = useState(false)
   const [pages, setPages] = useState<number[]>([])
+
+  const [onlyFavorites, setOnlyFavorites] = useState<boolean>(() => {
+    return restoreFromLocalStorage('books:onlyFavorites')
+  })
 
   const [searchTerm, setSearchTerm] = useState(() => {
     return restoreFromLocalStorage('books:searchTerm')
@@ -74,6 +81,10 @@ const Books: React.FC = () => {
 
   const [books, setBooks] = useState<BookProps[] | undefined>(() => {
     return restoreFromLocalStorage('books:books')
+  })
+
+  const [favorites, setFavorites] = useState<BookProps[]>(() => {
+    return restoreFromLocalStorage('books:favorites') || []
   })
 
   const searchTermInputRef = useRef<HTMLInputElement>(null)
@@ -113,6 +124,10 @@ const Books: React.FC = () => {
     saveToLocalStorage('books:searchTerm', JSON.stringify(searchTerm))
   }, [searchTerm])
 
+  useEffect(() => {
+    saveToLocalStorage('books:favorites', JSON.stringify(favorites))
+  }, [favorites])
+
   const calculateMaxPages = useCallback(() => {
     const PAGE_DIVIDER = 80
     const MAX_PAGES = 15
@@ -149,28 +164,78 @@ const Books: React.FC = () => {
       setCurrentPage(page)
 
       try {
-        const response = await api.get<BooksApiResponse>(
-          `/volumes?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
-        )
+        let books
+        let totalItems
 
-        if (response.status !== 200) {
-          throw new Error()
+        if (onlyFavorites) {
+          books = favorites.filter(fav =>
+            fav.volumeInfo.title.toLowerCase().includes(search.toLowerCase())
+          )
+
+          totalItems = books.length
+          books = books.slice(startIndex, startIndex + MAX_RESULTS)
+        } else {
+          const response = await api.get<BooksApiResponse>(
+            `/volumes?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
+          )
+
+          if (response.status !== 200) {
+            throw new Error()
+          }
+
+          totalItems = response.data.totalItems
+          books = totalItems === 0 ? [] : response.data.items
         }
 
-        const totalItems = response.data.totalItems
         setTotalItems(totalItems)
-
-        const books = totalItems === 0 ? [] : response.data.items
-
         setBooks(books)
         setLoading(false)
       } catch (err) {
         toast.error('Failed to load books')
+        setTotalItems(0)
         setLoading(false)
         setBooks([])
       }
     },
-    [currentPage, totalItems]
+    [currentPage, totalItems, favorites, onlyFavorites]
+  )
+
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true
+      return
+    }
+
+    saveToLocalStorage('books:onlyFavorites', JSON.stringify(onlyFavorites))
+
+    const searchTermTemp = searchTermInputRef.current?.value ?? ''
+
+    if (!onlyFavorites && !searchTermTemp) {
+      setBooks(undefined)
+      return
+    }
+
+    searchBooks(searchTermTemp, 1)
+  }, [onlyFavorites])
+
+  useEffect(() => {
+    if (onlyFavorites) {
+      searchBooks(searchTerm, currentPage)
+    }
+  }, [favorites])
+
+  const handleToggleFavoriteBook = useCallback(
+    (book: BookProps) => {
+      const filteredFavorites = favorites.filter(fav => fav.id !== book.id)
+
+      if (filteredFavorites.length === favorites?.length) {
+        setFavorites([...favorites, book])
+        return
+      }
+
+      setFavorites(filteredFavorites)
+    },
+    [favorites]
   )
 
   const handleSearchFormSubmit = useCallback(
@@ -179,7 +244,7 @@ const Books: React.FC = () => {
 
       const searchTermTemp = searchTermInputRef.current?.value ?? ''
 
-      if (!searchTermTemp) {
+      if (!searchTermTemp && !onlyFavorites) {
         toast.error(`Search term can't be empty`)
         return
       }
@@ -198,7 +263,14 @@ const Books: React.FC = () => {
           <strong>Books</strong>
         </header>
         <SubHeader onSubmit={handleSearchFormSubmit}>
-          <Input ref={searchTermInputRef} placeholder="Type your search here" />
+          <Input ref={searchTermInputRef} placeholder="Type your search here">
+            <FiStar
+              size={20}
+              title="Filter only favorite books"
+              onClick={() => setOnlyFavorites(!onlyFavorites)}
+              color={onlyFavorites ? '#3f3d56' : '#ddd'}
+            />
+          </Input>
           <Button primary type="submit">
             Search
           </Button>
@@ -218,7 +290,13 @@ const Books: React.FC = () => {
           <Card
             style={{ marginTop: 20 }}
             imgSrc={nothingFoundImg}
-            text="Nothing found. Maybe try a different title?"
+            text={
+              onlyFavorites
+                ? favorites.length === 0
+                  ? 'Nothing favorited'
+                  : `No favorites found with this search`
+                : 'Nothing found. Maybe try a different search?'
+            }
           />
         )}
 
@@ -231,8 +309,21 @@ const Books: React.FC = () => {
                   key={book.id}
                   onClick={() => history.push(`/books/${book.id}`)}
                 >
+                  <FiStar
+                    size={20}
+                    color={
+                      favorites.some(fav => fav.id === book.id)
+                        ? '#3f3d56'
+                        : '#ddd'
+                    }
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleToggleFavoriteBook(book)
+                    }}
+                  />
+
                   <Image
-                    src={book.volumeInfo.imageLinks.thumbnail}
+                    src={book.volumeInfo.imageLinks?.thumbnail}
                     alt={book.volumeInfo.title}
                   />
 

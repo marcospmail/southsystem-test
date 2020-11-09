@@ -71,7 +71,7 @@ const Book: React.FC = () => {
         {!loading && book && (
           <Details>
             <Image
-              src={book?.volumeInfo.imageLinks.medium}
+              src={book?.volumeInfo.imageLinks?.medium}
               alt={book?.volumeInfo.title}
             />
 
