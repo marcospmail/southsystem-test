@@ -1,14 +1,21 @@
-import React, { forwardRef, InputHTMLAttributes } from 'react'
+import React, { CSSProperties, forwardRef, InputHTMLAttributes } from 'react'
 
 import { Container } from './styles'
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  containerStyle?: CSSProperties
+}
 
 const Input: React.ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
-  { ...rest },
+  { children, containerStyle, ...rest },
   ref
 ) => {
-  return <Container ref={ref} {...rest} />
+  return (
+    <Container style={containerStyle}>
+      {children}
+      <input ref={ref} {...rest} />
+    </Container>
+  )
 }
 
 export default forwardRef(Input)
