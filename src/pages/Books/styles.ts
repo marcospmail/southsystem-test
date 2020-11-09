@@ -36,16 +36,34 @@ export const SubHeader = styled.form`
   justify-content: space-between;
   margin-top: 10px;
 
-  div {
+  > div {
     flex: 1;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 
     > svg {
       cursor: pointer;
     }
   }
 
+  > button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
   @media (max-width: 480px) {
-    flex-direction: column;
+    & {
+      flex-direction: column;
+
+      > div {
+        border-radius: 4px;
+      }
+
+      > button {
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+    }
   }
 `
 

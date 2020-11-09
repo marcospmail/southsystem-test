@@ -4,7 +4,7 @@ import { darken } from 'polished'
 export const Button = styled.button`
   border-radius: 4px;
   padding: 10px 15px;
-  border: 1px solid #ddd;
+  border: 0;
   font-weight: bold;
   color: #fff;
   font-size: 20px;
