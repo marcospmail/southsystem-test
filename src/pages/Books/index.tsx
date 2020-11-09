@@ -360,10 +360,13 @@ const Books: React.FC = () => {
                         </span>
                       )}
 
-                    <span className="book-publish">
-                      <strong>Publisher: </strong>
-                      {book.volumeInfo.publisher}
-                    </span>
+                    {book.volumeInfo.publisher && (
+                      <span className="book-publish">
+                        <strong>Publisher: </strong>
+                        {book.volumeInfo.publisher}
+                      </span>
+                    )}
+
                     {book.volumeInfo.publishedDate && (
                       <span className="book-publisheddate">
                         <strong>Date: : </strong>
