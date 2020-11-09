@@ -19,4 +19,16 @@ export const Container = styled.div`
       font-size: 30px;
     }
   }
+
+  @media (max-width: 400px) {
+    & {
+      padding: 30px 14px;
+
+      > a {
+        > strong {
+          font-size: 24px;
+        }
+      }
+    }
+  }
 `

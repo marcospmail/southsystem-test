@@ -14,19 +14,27 @@ export const Content = styled.main`
   display: flex;
   flex-direction: column;
 
-  header {
+  > header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    strong {
+    > strong {
       font-size: 34px;
       font-weight: bold;
       color: #3f3d56;
     }
+  }
 
-    button:first-child {
-      margin-right: 10px;
+  @media (max-width: 400px) {
+    & {
+      padding: 14px;
+
+      > header {
+        > strong {
+          font-size: 24px;
+        }
+      }
     }
   }
 `

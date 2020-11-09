@@ -25,6 +25,18 @@ export const Content = styled.div`
       margin-right: 10px;
     }
   }
+
+  @media (max-width: 400px) {
+    & {
+      padding: 14px;
+
+      > header {
+        > strong {
+          font-size: 24px;
+        }
+      }
+    }
+  }
 `
 
 export const BackButton = styled.button`
