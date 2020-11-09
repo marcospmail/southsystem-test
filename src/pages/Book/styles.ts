@@ -59,8 +59,8 @@ export const Details = styled.main`
     float: left;
     align-self: flex-start;
     width: 260px;
-    /* height: 360px; */
-    object-fit: cover;
+    height: 360px;
+    object-fit: contain;
     margin-right: 10px;
   }
 

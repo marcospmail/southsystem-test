@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import { BookProps } from '../Books'
 
 import Header from '../../components/Header'
+import Image from '../../components/Image'
 
 import api from '../../config/api'
 
@@ -69,7 +70,7 @@ const Book: React.FC = () => {
 
         {!loading && book && (
           <Details>
-            <img
+            <Image
               src={book?.volumeInfo.imageLinks.medium}
               alt={book?.volumeInfo.title}
             />

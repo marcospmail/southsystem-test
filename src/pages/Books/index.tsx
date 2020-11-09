@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import Header from '../../components/Header'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
+import Image from '../../components/Image'
 import Card from '../../components/Card'
 
 import api from '../../config/api'
@@ -230,16 +231,10 @@ const Books: React.FC = () => {
                   key={book.id}
                   onClick={() => history.push(`/books/${book.id}`)}
                 >
-                  {book.volumeInfo.imageLinks?.thumbnail ? (
-                    <img
-                      src={book.volumeInfo.imageLinks?.thumbnail}
-                      alt={book.volumeInfo.title}
-                    />
-                  ) : (
-                    <div className="image-placeholder">
-                      <span>Image not available</span>
-                    </div>
-                  )}
+                  <Image
+                    src={book.volumeInfo.imageLinks.thumbnail}
+                    alt={book.volumeInfo.title}
+                  />
 
                   <div className="book-details">
                     <span

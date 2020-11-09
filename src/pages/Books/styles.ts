@@ -67,17 +67,10 @@ export const BooksContainer = styled.section`
     > img {
       width: 110px;
       object-fit: cover;
-    }
 
-    .image-placeholder {
-      width: 110px;
-      height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      background: #e9e8e8;
-      padding: 10px;
+      &.fallback {
+        height: 150px;
+      }
     }
 
     .book-details {
