@@ -11,17 +11,13 @@ const Image: React.FC<ImageProps> = ({
   fallbackSrc = fallbackImg,
   ...rest
 }) => {
-  const [imgSrc, setImgSrc] = useState(src)
-  const [fallbackOn, setFallbackOn] = useState(false)
+  const [imgSrc, setImgSrc] = useState(src ?? fallbackSrc)
 
   return (
     <img
       src={imgSrc}
       className={imgSrc === fallbackSrc ? 'fallback' : undefined}
-      onError={() => {
-        setFallbackOn(true)
-        setImgSrc(fallbackSrc)
-      }}
+      onError={() => setImgSrc(fallbackSrc)}
       {...rest}
     />
   )
