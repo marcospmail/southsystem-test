@@ -1,11 +1,5 @@
-const restoreFromLocalStorage = (name: string) => {
-  const localStoredPages = localStorage.getItem(`@SouthSystem:${name}`)
-
-  if (localStoredPages) {
-    return JSON.parse(localStoredPages)
-  }
-
-  return undefined
+const restoreFromLocalStorage = (name: string): string | null => {
+  return localStorage.getItem(`@SouthSystem:${name}`)
 }
 
 const saveToLocalStorage = (name: string, obj: string): void => {

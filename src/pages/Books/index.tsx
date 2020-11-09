@@ -64,7 +64,8 @@ const Books: React.FC = () => {
   const [pages, setPages] = useState<number[]>([])
 
   const [onlyFavorites, setOnlyFavorites] = useState<boolean>(() => {
-    return restoreFromLocalStorage('books:onlyFavorites')
+    const restore = restoreFromLocalStorage('books:onlyFavorites')
+    return restore ? JSON.parse(restore) : false
   })
 
   const [searchTerm, setSearchTerm] = useState(() => {
@@ -72,19 +73,23 @@ const Books: React.FC = () => {
   })
 
   const [currentPage, setCurrentPage] = useState<number>(() => {
-    return restoreFromLocalStorage('books:currentPage')
+    const restore = restoreFromLocalStorage('books:currentPage')
+    return restore ? JSON.parse(restore) : 0
   })
 
   const [totalItems, setTotalItems] = useState<number>(() => {
-    return restoreFromLocalStorage('books:totalItems')
+    const restore = restoreFromLocalStorage('books:totalItems')
+    return restore ? JSON.parse(restore) : 0
   })
 
   const [books, setBooks] = useState<BookProps[] | undefined>(() => {
-    return restoreFromLocalStorage('books:books')
+    const restore = restoreFromLocalStorage('books:books')
+    return restore ? JSON.parse(restore) : undefined
   })
 
   const [favorites, setFavorites] = useState<BookProps[]>(() => {
-    return restoreFromLocalStorage('books:favorites') || []
+    const restore = restoreFromLocalStorage('books:favorites')
+    return restore ? JSON.parse(restore) : []
   })
 
   const searchTermInputRef = useRef<HTMLInputElement>(null)
@@ -121,7 +126,7 @@ const Books: React.FC = () => {
   }, [currentPage])
 
   useEffect(() => {
-    saveToLocalStorage('books:searchTerm', JSON.stringify(searchTerm))
+    saveToLocalStorage('books:searchTerm', searchTerm)
   }, [searchTerm])
 
   useEffect(() => {
