@@ -3,13 +3,11 @@ import styled from 'styled-components'
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
 `
 
 export const Content = styled.div`
   width: 100%;
   max-width: 980px;
-  height: 100vh;
   margin: 0 auto;
   padding: 30px;
 
@@ -60,8 +58,12 @@ export const Details = styled.main`
     align-self: flex-start;
     width: 260px;
     height: 360px;
-    object-fit: contain;
+    object-fit: cover;
     margin-right: 10px;
+
+    &.fallback {
+      height: 360px;
+    }
   }
 
   strong {
