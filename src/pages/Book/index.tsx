@@ -41,7 +41,9 @@ const Book: React.FC = () => {
         }
 
         const book = response.data
-        book.volumeInfo.description = stripHtml(book.volumeInfo.description)
+        if (book?.volumeInfo.description) {
+          book.volumeInfo.description = stripHtml(book.volumeInfo.description)
+        }
 
         setBook(book)
         setLoading(false)
