@@ -163,10 +163,10 @@ const Books: React.FC = () => {
       setSearchTerm(search)
       setCurrentPage(page)
 
-      try {
-        let books
-        let totalItems
+      let books
+      let totalItems
 
+      try {
         if (onlyFavorites) {
           books = favorites.filter(fav =>
             fav.volumeInfo.title.toLowerCase().includes(search.toLowerCase())
@@ -265,6 +265,7 @@ const Books: React.FC = () => {
         <SubHeader onSubmit={handleSearchFormSubmit}>
           <Input ref={searchTermInputRef} placeholder="Type your search here">
             <FiStar
+              data-testid="testid_filteronlyfavorites-svg"
               size={20}
               title="Filter only favorite books"
               onClick={() => setOnlyFavorites(!onlyFavorites)}
@@ -310,6 +311,8 @@ const Books: React.FC = () => {
                   onClick={() => history.push(`/books/${book.id}`)}
                 >
                   <FiStar
+                    data-testid="testid_favorite-svg"
+                    title="Click to favorite this book"
                     size={20}
                     color={
                       favorites.some(fav => fav.id === book.id)
