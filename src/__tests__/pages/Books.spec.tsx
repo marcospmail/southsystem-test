@@ -1,11 +1,12 @@
 import React from 'react'
 import { fireEvent, render, waitFor, screen } from '@testing-library/react'
 import MockAdapter from 'axios-mock-adapter'
-import generateBook from '../data/bookGenerator'
+import generateBook from '../util/bookGenerator'
 
 import Books, { BookProps } from '../../pages/Books'
 import api from '../../config/api'
 import { BrowserRouter, Route } from 'react-router-dom'
+import { renderInsideBrowserRouter } from '../util/render'
 
 const apiMock = new MockAdapter(api)
 
@@ -32,9 +33,11 @@ describe('Books Page', () => {
   })
 
   it('should show books results on search', async () => {
-    const { getByText, getAllByTestId, getByPlaceholderText } = render(
-      <Books />
-    )
+    const {
+      getByText,
+      getAllByTestId,
+      getByPlaceholderText,
+    } = renderInsideBrowserRouter(<Books />)
 
     const totalItems = 100
     mockBooksGetApi(totalItems, generateBooks(10))
@@ -56,7 +59,9 @@ describe('Books Page', () => {
   it('should call api.get with search term', async () => {
     const apiGetFunction = jest.spyOn(api, 'get')
 
-    const { getByText, getByPlaceholderText } = render(<Books />)
+    const { getByText, getByPlaceholderText } = renderInsideBrowserRouter(
+      <Books />
+    )
 
     const searchButtonComponent = getByText('Search')
     const input = getByPlaceholderText('Type your search here')
@@ -76,7 +81,11 @@ describe('Books Page', () => {
     const booksCount = 10
     mockBooksGetApi(totalItems, generateBooks(booksCount))
 
-    const { container, getByText, getByPlaceholderText } = render(<Books />)
+    const {
+      container,
+      getByText,
+      getByPlaceholderText,
+    } = renderInsideBrowserRouter(<Books />)
 
     const searchButtonComponent = getByText('Search')
     const input = getByPlaceholderText('Type your search here')
@@ -97,7 +106,9 @@ describe('Books Page', () => {
     const books = generateBooks(10)
     mockBooksGetApi(100, books)
 
-    const { getByText, getByPlaceholderText } = render(<Books />)
+    const { getByText, getByPlaceholderText } = renderInsideBrowserRouter(
+      <Books />
+    )
 
     const searchButtonComponent = getByText('Search')
     const input = getByPlaceholderText('Type your search here')
@@ -120,7 +131,7 @@ describe('Books Page', () => {
 
       expect(localStorageSetItemFunction).toHaveBeenCalledWith(
         '@SouthSystem:books:searchTerm',
-        JSON.stringify(searchTerm)
+        searchTerm
       )
 
       expect(localStorageSetItemFunction).toHaveBeenCalledWith(
@@ -140,7 +151,7 @@ describe('Books Page', () => {
         case '@SouthSystem:books:books':
           return JSON.stringify(books)
         case '@SouthSystem:books:searchTerm':
-          return JSON.stringify(searchTerm)
+          return searchTerm
         case '@SouthSystem:books:totalItems':
           return JSON.stringify(totalItems)
         default:
@@ -148,7 +159,9 @@ describe('Books Page', () => {
       }
     })
 
-    const { getAllByTestId, getByPlaceholderText } = render(<Books />)
+    const { getAllByTestId, getByPlaceholderText } = renderInsideBrowserRouter(
+      <Books />
+    )
 
     expect(getByPlaceholderText('Type your search here')).toHaveValue(
       searchTerm
@@ -164,7 +177,7 @@ describe('Books Page', () => {
   it('should go to book details page after click a book', async () => {
     const books = generateBooks(9)
 
-    const { container } = render(
+    const { container } = renderInsideBrowserRouter(
       <BrowserRouter>
         <Books />
         <Route path={`/books/:id`}>Book details page</Route>
@@ -191,7 +204,7 @@ describe('Books Page', () => {
   it('should save onlyFavorites state in localStorage on filter click', async () => {
     const setLocalStorageItemFunction = jest.spyOn(Storage.prototype, 'setItem')
 
-    const { getByTestId } = render(<Books />)
+    const { getByTestId } = renderInsideBrowserRouter(<Books />)
 
     const filterOnlyFavorites = getByTestId('testid_filteronlyfavorites-svg')
 
@@ -219,7 +232,7 @@ describe('Books Page', () => {
     const books = generateBooks(10)
     mockBooksGetApi(100, books)
 
-    const { getAllByTestId } = render(<Books />)
+    const { getAllByTestId } = renderInsideBrowserRouter(<Books />)
 
     const searchButtonComponent = screen.getByText('Search')
     const input = screen.getByPlaceholderText('Type your search here')

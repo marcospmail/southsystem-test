@@ -33,7 +33,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --watchAll false --testPathIgnorePatterns=src/__tests__/data",
+    "test": "react-scripts test --watchAll false --testPathIgnorePatterns=src/__tests__/util",
     "test:coverage": "yarn test --coverage " ,
     "eject": "react-scripts eject"
   },

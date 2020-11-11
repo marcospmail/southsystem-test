@@ -9,7 +9,7 @@ import { isValid, format, parseISO } from 'date-fns'
 
 import Book from '../../pages/Book'
 import api from '../../config/api'
-import bookGenerator from '../data/bookGenerator'
+import bookGenerator from '../util/bookGenerator'
 
 const apiMock = new MockAdapter(api)
 
@@ -23,6 +23,7 @@ jest.mock('react-router-dom', () => {
     useHistory: () => ({
       push: jest.fn(),
     }),
+    Link: ({ children }: { children: React.ReactNode }) => children,
   }
 })
 
