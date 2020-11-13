@@ -55,7 +55,7 @@ const initialState = {
   searchTerm: '',
   totalItems: 0,
   pages: [],
-  books: [],
+  books: undefined,
   favorites: [],
   loading: false,
 }
