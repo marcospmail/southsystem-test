@@ -9,7 +9,7 @@ import Button from '../../components/Button'
 import Image from '../../components/Image'
 import Card from '../../components/Card'
 
-import { useBooks } from '../../hooks/bookReducer'
+import useBooks from '../../hooks/useBooks'
 import { IBook } from '../../types/IBook'
 
 import nothingFoundImg from '../../assets/nothing-found.svg'

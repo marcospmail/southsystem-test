@@ -16,7 +16,7 @@ export interface State {
   loading: boolean
 }
 
-export enum Types {
+enum Types {
   UPDATE,
 }
 
@@ -24,6 +24,7 @@ type Action = {
   type: Types.UPDATE
   payload: Partial<State>
 }
+
 const bookReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case Types.UPDATE: {
@@ -48,7 +49,7 @@ const saveToLocalStorage = (newData: Partial<State>): void => {
   localStorage.setItem('@SouthSystem:books', stringifiedBooks)
 }
 
-export const initialState = {
+const initialState = {
   onlyFavorites: false,
   currentPage: 0,
   searchTerm: '',
@@ -59,7 +60,7 @@ export const initialState = {
   loading: false,
 }
 
-export const initializer = (initialValue = initialState): State => {
+const initializer = (initialValue = initialState): State => {
   const localStoredBooksData = localStorage.getItem('@SouthSystem:books')
 
   let booksData = {}
@@ -87,7 +88,7 @@ interface IUseBooks extends Omit<State, 'totalItems'> {
 
 const MAX_ITEMS_PER_PAGE = 10
 
-export const useBooks = (): IUseBooks => {
+const useBooks = (): IUseBooks => {
   const didMount = useRef(false)
 
   const [
@@ -243,4 +244,4 @@ export const useBooks = (): IUseBooks => {
   }
 }
 
-export { bookReducer }
+export default useBooks
