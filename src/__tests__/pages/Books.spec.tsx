@@ -1,9 +1,10 @@
 import React from 'react'
-import { fireEvent, render, waitFor, screen } from '@testing-library/react'
+import { fireEvent, waitFor, screen } from '@testing-library/react'
 import MockAdapter from 'axios-mock-adapter'
 import generateBook from '../util/bookGenerator'
 
-import Books, { BookProps } from '../../pages/Books'
+import Books from '../../pages/Books'
+import { IBook } from '../../types/IBook'
 import api from '../../config/api'
 import { BrowserRouter, Route } from 'react-router-dom'
 import { renderInsideBrowserRouter } from '../util/render'
@@ -16,7 +17,7 @@ function generateBooks(count: number) {
   )
 }
 
-const mockBooksGetApi = (totalItems: number, books: BookProps[]) => {
+const mockBooksGetApi = (totalItems: number, books: IBook[]) => {
   const volumesUri = '/volumes'
   const url = new RegExp(`${volumesUri}`)
 
@@ -118,25 +119,30 @@ describe('Books Page', () => {
     fireEvent.change(input, { target: { value: searchTerm } })
     fireEvent.click(searchButtonComponent)
 
-    await waitFor(async () => {
-      expect(localStorageSetItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:totalItems',
-        '100'
+    await waitFor(() => {
+      expect(localStorageSetItemFunction).toHaveBeenLastCalledWith(
+        '@SouthSystem:books',
+        expect.stringContaining('"totalItems":100')
+      )
+
+      expect(localStorageSetItemFunction).toHaveBeenLastCalledWith(
+        '@SouthSystem:books',
+        expect.stringContaining('"loading":false')
       )
 
       expect(localStorageSetItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:currentPage',
-        '1'
+        '@SouthSystem:books',
+        expect.stringContaining('"searchTerm":"fever"')
       )
 
       expect(localStorageSetItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:searchTerm',
-        searchTerm
+        '@SouthSystem:books',
+        expect.stringContaining('"currentPage":1')
       )
 
       expect(localStorageSetItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:books',
-        JSON.stringify(books)
+        '@SouthSystem:books',
+        expect.stringContaining(`"books":${JSON.stringify(books)}`)
       )
     })
   })
@@ -211,10 +217,9 @@ describe('Books Page', () => {
     fireEvent.click(filterOnlyFavorites)
 
     await waitFor(() => {
-      expect(filterOnlyFavorites).toHaveAttribute('color', '#3f3d56')
       expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:onlyFavorites',
-        JSON.stringify(true)
+        '@SouthSystem:books',
+        expect.stringContaining('"onlyFavorites":true')
       )
     })
 
@@ -222,8 +227,8 @@ describe('Books Page', () => {
 
     await waitFor(() => {
       expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:onlyFavorites',
-        JSON.stringify(false)
+        '@SouthSystem:books',
+        expect.stringContaining('"onlyFavorites":false')
       )
     })
   })
@@ -232,33 +237,40 @@ describe('Books Page', () => {
     const books = generateBooks(10)
     mockBooksGetApi(100, books)
 
-    const { getAllByTestId } = renderInsideBrowserRouter(<Books />)
+    const {
+      getByText,
+      getAllByTestId,
+      getByPlaceholderText,
+    } = renderInsideBrowserRouter(<Books />)
 
-    const searchButtonComponent = screen.getByText('Search')
-    const input = screen.getByPlaceholderText('Type your search here')
+    const searchButtonComponent = getByText('Search')
+    const input = getByPlaceholderText('Type your search here')
 
     fireEvent.change(input, { target: { value: 'fever' } })
     fireEvent.click(searchButtonComponent)
 
-    const setLocalStorageItemFunction = jest.spyOn(Storage.prototype, 'setItem')
+    const localStorageSetItemFunction = jest.spyOn(Storage.prototype, 'setItem')
 
     await waitFor(() => {
       fireEvent.click(getAllByTestId('testid_favorite-svg')[0])
     })
 
     await waitFor(() => {
-      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:favorites',
-        JSON.stringify([books[0]])
+      expect(localStorageSetItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books',
+        expect.stringContaining(`"favorites":[${JSON.stringify(books[0])}]`)
       )
     })
 
-    fireEvent.click(getAllByTestId('testid_favorite-svg')[0])
+    await waitFor(() => {
+      localStorageSetItemFunction.mockClear()
+      fireEvent.click(getAllByTestId('testid_favorite-svg')[0])
+    })
 
     await waitFor(() => {
-      expect(setLocalStorageItemFunction).toHaveBeenCalledWith(
-        '@SouthSystem:books:favorites',
-        JSON.stringify([])
+      expect(localStorageSetItemFunction).toHaveBeenCalledWith(
+        '@SouthSystem:books',
+        expect.not.stringContaining(`"favorites":[${JSON.stringify(books[0])}]`)
       )
     })
   })

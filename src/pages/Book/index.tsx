@@ -4,7 +4,7 @@ import { isValid, format, parseISO } from 'date-fns'
 import { FiArrowLeft } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 
-import { BookProps } from '../Books'
+import { IBook } from '../../types/IBook'
 
 import Header from '../../components/Header'
 import Image from '../../components/Image'
@@ -23,7 +23,7 @@ interface ParamTypes {
 }
 
 const Book: React.FC = () => {
-  const [book, setBook] = useState<BookProps>()
+  const [book, setBook] = useState<IBook>()
   const [loading, setLoading] = useState(true)
   const { id } = useParams<ParamTypes>()
 
@@ -34,7 +34,7 @@ const Book: React.FC = () => {
       try {
         setLoading(true)
 
-        const response = await api.get<BookProps>(`/volumes/${id}`)
+        const response = await api.get<IBook>(`/volumes/${id}`)
 
         if (response.status !== 200) {
           throw new Error()

@@ -1,13 +1,13 @@
-import { BookProps } from '../../pages/Books'
+import { IBook } from '../../types/IBook'
 
-export default (index: string): BookProps => ({
+export default (index: string): IBook => ({
   id: index,
   volumeInfo: {
     title: `Book title ${index}`,
-    subtitle: 'Book subtitle 1',
-    description: 'Book description 1',
-    authors: ['Book 1 Author 1', 'Book 2 Author 2'],
-    publisher: 'Book 1 publisher',
+    subtitle: `Book subtitle ${index}`,
+    description: `Book description ${index}`,
+    authors: ['Book 1 Author 1', `Book ${index} Author ${index}`],
+    publisher: `Book ${index} publisher`,
     publishedDate: '25/01/2011',
     imageLinks: {
       thumbnail:

@@ -1,13 +1,6 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  FormEvent,
-  useRef,
-} from 'react'
+import React, { useCallback, useEffect, FormEvent, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { format, parseISO, isValid } from 'date-fns'
-import { toast } from 'react-toastify'
 import { FiStar } from 'react-icons/fi'
 
 import Header from '../../components/Header'
@@ -16,12 +9,8 @@ import Button from '../../components/Button'
 import Image from '../../components/Image'
 import Card from '../../components/Card'
 
-import api from '../../config/api'
-
-import {
-  restoreFromLocalStorage,
-  saveToLocalStorage,
-} from '../../utils/localStorage'
+import { useBooks } from '../../hooks/bookReducer'
+import { IBook } from '../../types/IBook'
 
 import nothingFoundImg from '../../assets/nothing-found.svg'
 import readingImg from '../../assets/reading.svg'
@@ -34,232 +23,63 @@ import {
   SubHeader,
 } from './styles'
 
-export interface BookProps {
-  id: string
-  volumeInfo: {
-    title: string
-    subtitle: string
-    description: string
-    authors?: string[]
-    publisher: string
-    publishedDate?: string
-    imageLinks?: {
-      thumbnail: string
-      medium: string
-    }
-  }
-}
-
-interface BooksApiResponse {
-  totalItems: number
-  items?: BookProps[]
-}
-
-const MAX_RESULTS = 10
-
 const Books: React.FC = () => {
-  const didMount = useRef(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const [loading, setLoading] = useState(false)
-  const [pages, setPages] = useState<number[]>([])
-
-  const [onlyFavorites, setOnlyFavorites] = useState<boolean>(() => {
-    const restore = restoreFromLocalStorage('books:onlyFavorites')
-    return restore ? JSON.parse(restore) : false
-  })
-
-  const [searchTerm, setSearchTerm] = useState(() => {
-    return restoreFromLocalStorage('books:searchTerm') || ''
-  })
-
-  const [currentPage, setCurrentPage] = useState<number>(() => {
-    const restore = restoreFromLocalStorage('books:currentPage')
-    return restore ? JSON.parse(restore) : 0
-  })
-
-  const [totalItems, setTotalItems] = useState<number>(() => {
-    const restore = restoreFromLocalStorage('books:totalItems')
-    return restore ? JSON.parse(restore) : 0
-  })
-
-  const [books, setBooks] = useState<BookProps[] | undefined>(() => {
-    const restore = restoreFromLocalStorage('books:books')
-    return restore ? JSON.parse(restore) : undefined
-  })
-
-  const [favorites, setFavorites] = useState<BookProps[]>(() => {
-    const restore = restoreFromLocalStorage('books:favorites')
-    return restore ? JSON.parse(restore) : []
-  })
-
-  const searchTermInputRef = useRef<HTMLInputElement>(null)
+  const {
+    fetchBooks,
+    update,
+    updatePagesCount,
+    toggleFavorite,
+    search,
+    searchTerm,
+    currentPage,
+    pages,
+    books,
+    favorites,
+    loading,
+    onlyFavorites,
+  } = useBooks()
 
   const history = useHistory()
 
   useEffect(() => {
-    window.addEventListener('resize', calculatePages)
+    window.addEventListener('resize', updatePagesCount)
+
     return () => {
-      window.removeEventListener('resize', calculatePages)
+      window.removeEventListener('resize', updatePagesCount)
     }
   }, [])
 
   useEffect(() => {
-    if (searchTermInputRef.current) {
-      searchTermInputRef.current.value = searchTerm
+    if (searchInputRef.current) {
+      searchInputRef.current.value = searchTerm
     }
-  }, [searchTermInputRef])
-
-  useEffect(() => {
-    calculatePages()
-  }, [totalItems])
-
-  useEffect(() => {
-    saveToLocalStorage('books:books', JSON.stringify(books))
-  }, [books])
-
-  useEffect(() => {
-    saveToLocalStorage('books:totalItems', JSON.stringify(totalItems))
-  }, [totalItems])
-
-  useEffect(() => {
-    saveToLocalStorage('books:currentPage', JSON.stringify(currentPage))
-  }, [currentPage])
-
-  useEffect(() => {
-    saveToLocalStorage('books:searchTerm', searchTerm)
-  }, [searchTerm])
-
-  useEffect(() => {
-    saveToLocalStorage('books:favorites', JSON.stringify(favorites))
-  }, [favorites])
-
-  const calculateMaxPages = useCallback(() => {
-    const PAGE_DIVIDER = 60
-    const MAX_PAGES = 15
-
-    const maxPages = Math.min(window.innerWidth / PAGE_DIVIDER, MAX_PAGES)
-    return maxPages
-  }, [])
-
-  const calculatePages = () => {
-    if (!currentPage || !totalItems) return []
-
-    const maxPages = calculateMaxPages()
-
-    const min = 1
-    const total = Math.ceil(totalItems / MAX_RESULTS)
-    let length = maxPages
-
-    if (length > total) length = total
-
-    let start = currentPage - Math.floor(length / 2)
-    start = Math.max(start, min)
-    start = Math.min(start, min + total - length)
-
-    start = Math.floor(start)
-
-    const pages = Array.from({ length }, (el, i) => start + i)
-    setPages(pages)
-  }
-
-  const searchBooks = useCallback(
-    async (search: string, page: number) => {
-      setLoading(true)
-      const startIndex = (page - 1) * 10
-
-      setSearchTerm(search)
-      setCurrentPage(page)
-
-      let books
-      let totalItems
-
-      try {
-        if (onlyFavorites) {
-          books = favorites.filter(fav =>
-            fav.volumeInfo.title.toLowerCase().includes(search.toLowerCase())
-          )
-
-          totalItems = books.length
-          books = books.slice(startIndex, startIndex + MAX_RESULTS)
-        } else {
-          const response = await api.get<BooksApiResponse>(
-            `/volumes?q=${search}&startIndex=${startIndex}&maxResults=${MAX_RESULTS}`
-          )
-
-          if (response.status !== 200) {
-            throw new Error()
-          }
-
-          totalItems = response.data.totalItems
-          books = totalItems === 0 ? [] : response.data.items
-        }
-
-        setTotalItems(totalItems)
-        setBooks(books)
-        setLoading(false)
-      } catch (err) {
-        toast.error('Failed to load books')
-        setTotalItems(0)
-        setLoading(false)
-        setBooks([])
-      }
-    },
-    [currentPage, totalItems, favorites, onlyFavorites]
-  )
-
-  useEffect(() => {
-    if (!didMount.current) {
-      didMount.current = true
-      return
-    }
-
-    saveToLocalStorage('books:onlyFavorites', JSON.stringify(onlyFavorites))
-
-    const searchTermTemp = searchTermInputRef.current?.value ?? ''
-
-    if (!onlyFavorites && !searchTermTemp) {
-      setBooks(undefined)
-      return
-    }
-
-    searchBooks(searchTermTemp, 1)
-  }, [onlyFavorites])
-
-  useEffect(() => {
-    if (onlyFavorites) {
-      searchBooks(searchTerm, currentPage)
-    }
-  }, [favorites])
+  }, [searchInputRef])
 
   const handleToggleFavoriteBook = useCallback(
-    (book: BookProps) => {
-      const filteredFavorites = favorites.filter(fav => fav.id !== book.id)
-
-      if (filteredFavorites.length === favorites?.length) {
-        setFavorites([...favorites, book])
-        return
-      }
-
-      setFavorites(filteredFavorites)
+    (book: IBook) => {
+      toggleFavorite(book)
     },
-    [favorites]
+    [toggleFavorite]
   )
 
   const handleSearchFormSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault()
 
-      const searchTermTemp = searchTermInputRef.current?.value ?? ''
-
-      if (!searchTermTemp && !onlyFavorites) {
-        toast.error(`Search term can't be empty`)
-        return
-      }
-
-      searchBooks(searchTermTemp, 1)
+      const searchTemp = searchInputRef.current?.value ?? ''
+      search(searchTemp)
     },
-    [searchBooks, searchTermInputRef]
+    [fetchBooks, searchInputRef]
   )
+
+  const toggleOnlyFavorites = useCallback(() => {
+    update({
+      onlyFavorites: !onlyFavorites,
+      searchTerm: searchInputRef.current?.value,
+    })
+  }, [onlyFavorites, searchInputRef])
 
   return (
     <Container>
@@ -270,12 +90,12 @@ const Books: React.FC = () => {
           <strong>Books</strong>
         </header>
         <SubHeader onSubmit={handleSearchFormSubmit}>
-          <Input ref={searchTermInputRef} placeholder="Type your search here">
+          <Input ref={searchInputRef} placeholder="Type your search here">
             <FiStar
               data-testid="testid_filteronlyfavorites-svg"
               size={20}
               title="Filter only favorite books"
-              onClick={() => setOnlyFavorites(!onlyFavorites)}
+              onClick={toggleOnlyFavorites}
               color={onlyFavorites ? '#3f3d56' : '#ddd'}
             />
           </Input>
@@ -398,7 +218,7 @@ const Books: React.FC = () => {
                   key={page}
                   onClick={() => {
                     if (page !== currentPage) {
-                      searchBooks(searchTerm, page)
+                      fetchBooks(searchTerm, page)
                     }
                   }}
                   className={currentPage === page ? 'active' : undefined}
