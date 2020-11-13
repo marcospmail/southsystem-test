@@ -16,12 +16,12 @@ const apiMock = new MockAdapter(api)
 const mockBookId = 'SpWvJSonZKcC'
 
 jest.mock('react-router-dom', () => {
+  const obj = jest.requireActual('react-router-dom')
+
   return {
+    ...obj,
     useParams: () => ({
       id: mockBookId,
-    }),
-    useHistory: () => ({
-      push: jest.fn(),
     }),
     Link: ({ children }: { children: React.ReactNode }) => children,
   }

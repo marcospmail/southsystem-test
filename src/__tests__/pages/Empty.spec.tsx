@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Router } from 'react-router-dom'
+import { Route, Router } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import { createMemoryHistory } from 'history'
 
@@ -12,12 +12,10 @@ describe('Empty', () => {
     history.push('/')
 
     render(
-      <BrowserRouter>
-        <Router history={history}>
-          <Route path="/" component={Books} exact />
-          <Route component={Empty} />
-        </Router>
-      </BrowserRouter>
+      <Router history={history}>
+        <Route path="/" component={Books} exact />
+        <Route component={Empty} />
+      </Router>
     )
 
     expect(screen.getByText(`You shouldn't be here.`)).toBeInTheDocument()
